@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         email,
         amount,
         metadata: metadata || {},
-        callback_url: 'https://your-frontend.com/payment-success',
+        callback_url: 'https://moderneventsgh.com',
       },
       {
         headers: {
