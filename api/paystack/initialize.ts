@@ -5,15 +5,17 @@ import axios from 'axios';
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY!;
 
+// /pages/api/paystack/initialize.ts
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({ message: 'Method Not Allowed' }); // ✅ valid JSON
   }
 
   const { email, amount, metadata } = req.body;
 
   if (!email || !amount) {
-    return res.status(400).json({ message: 'Email and amount are required' });
+    return res.status(400).json({ message: 'Email and amount are required' }); // ✅ valid JSON
   }
 
   try {
@@ -21,9 +23,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       'https://api.paystack.co/transaction/initialize',
       {
         email,
-        amount, // amount in kobo (100 NGN = 10000)
+        amount,
         metadata: metadata || {},
-        callback_url: 'https://moderneventsgh.com', // optional
+        callback_url: 'https://your-frontend.com/payment-success',
       },
       {
         headers: {
@@ -33,11 +35,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     );
 
-    const data:any = response.data;
+    const { data } = response.data;
 
-    return res.status(200).json({ authorization_url: data.authorization_url, reference: data.reference });
+    return res.status(200).json({
+      authorization_url: data.authorization_url,
+      reference: data.reference,
+    }); // ✅ valid JSON
   } catch (error: any) {
-    console.error('Paystack init error:', error.response?.data || error.message);
-    return res.status(500).json({ message: 'Failed to initialize transaction' });
+    console.error('Paystack error:', error.response?.data || error.message);
+
+    return res.status(500).json({
+      message: 'Failed to initialize transaction',
+      error: error.response?.data || error.message,
+    }); // ✅ valid JSON even on error
   }
 }
