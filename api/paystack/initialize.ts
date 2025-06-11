@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     );
 
-    const { data } = response.data;
+    const data:any = response.data;
 
     return res.status(200).json({
       authorization_url: data.authorization_url,
